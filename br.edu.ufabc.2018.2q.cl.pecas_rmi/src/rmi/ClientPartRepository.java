@@ -10,6 +10,7 @@
 package rmi;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.Scanner;
 
 import serializaveis.*;
 
@@ -17,36 +18,65 @@ public class ClientPartRepository {
 	public static void main(String[] args) {
 		try {
 
-			// Localiza o registry. √â poss√≠vel usar endere√ßo/IP porta
+			// Localiza o registry. Eh possivel usar endereÁo/IP porta
 			Registry registry = LocateRegistry.getRegistry(null);
-			// Consulta o registry e obt√©m o stub para o objeto remoto
+			// Consulta o registry e obtem o stub para o objeto remoto
 			PartRepository partRepos = (PartRepository) registry.lookup("partRepos");
-			// A partir deste momento, cahamadas √† Caluladora podem ser
-			// feitas como qualquer chamada a m√©todos
+			// A partir deste momento, chamadas ao†PartRepository podem ser
+			// feitas como qualquer chamada a metodos
+			
+			ClientCommand cc = new ClientCommand();
+			Scanner entrada = new Scanner(System.in);
+			String comando = "";
+			System.out.println("Digite: 'Commands' para visualisar a lista de possÌveis comandos permitidos ao usu·rio.");
+			System.out.println("Caso j· os conheÁa, digite a primeira aÁ„o que deseja realizar e aperte enter...");
 
-			/*Numero num1 = new NumeroImpl(3);
-       Numero num2 = new NumeroImpl(4);
-       //Aqui s√£o feitas diversas chamadas remotas
-       Numero soma = calc.soma(num1, num2);
-       Numero sub = calc.subtrai(num1, num2);
-       Numero mult = calc.multiplica(num1, num2);
-       Numero div = calc.divide(num1, num2);
-       System.out.println("Resultados obtidos do servidor:" +
-                          "\n\t+:" + soma.getValor() +
-                          "\n\t-:" + sub.getValor()  +
-                          "\n\t*:" + mult.getValor() +
-                          "\n\t/:" + div.getValor());
-
-       try {
-           calc.divide(new NumeroImpl(1), new NumeroImpl(0));
-       } catch (DivisaoPorZeroException e) {
-           System.out.println(
-             "Tentou dividir por zero! Esta √© uma exce√ß√£o remota.");
-       }*/
+			while (comando != "quit") {
+				comando = entrada.next();
+				switch (comando){
+					case "Commands":
+						cc.command();
+					case "bind":
+						cc.bind();
+					case "listp":
+						cc.listp();
+					case "getp":
+						cc.getp();
+					case "showp":
+						cc.showp();
+					case "clearlist":
+						cc.clearlist();
+					case "addsubpart":
+						cc.addsubpart();
+					case "addp":
+						cc.addp();
+					default:
+						System.out.println("Este n„o È um comando v·lido!");
+				}
+			}
 
 		} catch (Exception e) {
-			System.err.println("Ocorreu um erro no cliente: " +
-					e.toString());
+			System.err.println("Ocorreu um erro no cliente: " + e.toString());
 		}
-	}
+	}	
 }
+
+/*Numero num1 = new NumeroImpl(3);
+Numero num2 = new NumeroImpl(4);
+//Aqui s√£o feitas diversas chamadas remotas
+Numero soma = calc.soma(num1, num2);
+Numero sub = calc.subtrai(num1, num2);
+Numero mult = calc.multiplica(num1, num2);
+Numero div = calc.divide(num1, num2);
+System.out.println("Resultados obtidos do servidor:" +
+                   "\n\t+:" + soma.getValor() +
+                   "\n\t-:" + sub.getValor()  +
+                   "\n\t*:" + mult.getValor() +
+                   "\n\t/:" + div.getValor());
+
+try {
+    calc.divide(new NumeroImpl(1), new NumeroImpl(0));
+} catch (DivisaoPorZeroException e) {
+    System.out.println(
+      "Tentou dividir por zero! Esta √© uma exce√ß√£o remota.");
+}*/

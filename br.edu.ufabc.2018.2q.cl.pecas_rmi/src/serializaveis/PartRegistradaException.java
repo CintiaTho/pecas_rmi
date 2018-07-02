@@ -1,5 +1,5 @@
 /**
- * PartRegistradaException para alterações não permitidas.
+ * PartRegistradaException para alteracoes nao permitidas.
  */
 
 /**

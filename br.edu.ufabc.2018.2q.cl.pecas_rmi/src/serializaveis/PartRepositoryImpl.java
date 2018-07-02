@@ -22,7 +22,7 @@ public class PartRepositoryImpl implements PartRepository {
 	private HashMap<UID, Part> uid_part;
 
 	public PartRepositoryImpl(String nome) {
-		// PartRepositoryImpl só possui o nome e o inventário está vazio
+		// PartRepositoryImpl - possui o nome, e o inventario esta vazio
 		this.uid = new UID();
 		this.nome = nome;
 		this.parts = new HashSet<Part>();
@@ -35,25 +35,25 @@ public class PartRepositoryImpl implements PartRepository {
 		return this.uid_part.get(uid);
 	}
 
-	// Nome do repositório
+	// Nome do repositorio
 	@Override
 	public String getPartRepositoryNome() {
 		return this.nome;
 	}
 
-	// Mapeamento do repositório de peça por quantidade
+	// Mapeamento do repositorio de peca por quantidade
 	@Override
 	public HashSet<Part> getPartRepositoryParts() {
 		return this.parts;
 	}
 
-	// Código do repositório
+	// Codigo do repositorio
 	@Override
 	public UID getPartRepositoryUID() {
 		return this.uid;
 	}
 
-	// Registra Part em repositório
+	// Registra Part em repositorio
 	@Override
 	public void registraPart(Part part) throws RemoteException, PartRegistradaException {
 		if (part.isRegistrado()) {

@@ -28,12 +28,12 @@ public class PartImpl implements Part {
 		this.nome = nome;
 		this.descricao = descricao;
 		this.subPartQuant = new HashMap<Part, Integer>();
-		// Inicialmente cria a peça sem atrelar a um repositório
+		// Inicialmente cria a peca sem atrelar a um repositorio
 		this.repositorio = null;
 
 		// Efetua triagem dos subcomponentes
 		HashMap<Part, Integer> subcomponentes = new HashMap<Part, Integer>();
-		// Popula subPartQuant validando as entradas do parâmetro
+		// Popula subPartQuant validando as entradas do parametro
 		for (HashMap.Entry<Part, Integer> entrada : subPartQuant.entrySet()) {
 			Part part = entrada.getKey();
 			if (part == null) {
@@ -46,7 +46,7 @@ public class PartImpl implements Part {
 			if (quant <= 0) {
 				throw new QuantidadeInvalidaException();
 			}
-			// Part de subcomponente já precisa estar registrado em repositório
+			// Part de subcomponente ja precisa estar registrado em repositorio
 			if (!part.isRegistrado()) {
 				throw new PartNaoRegistradaException();
 			}
@@ -55,49 +55,49 @@ public class PartImpl implements Part {
 		this.subPartQuant = subcomponentes;
 	}
 
-	// Descrição da peça
+	// Descricao da peca
 	@Override
 	public String getPartDescricao() {
 		return this.descricao;
 	}
 
-	// Nome da peça
+	// Nome da peca
 	@Override
 	public String getPartNome() {
 		return this.nome;
 	}
 
-	// Repositório registrado
+	// Repositorio registrado
 	@Override
 	public PartRepository getPartRepository() {
 		return this.repositorio;
 	}
 
-	// Código da peça
+	// Codigo da peca
 	@Override
 	public UID getPartUID() {
 		return this.uid;
 	}
 
-	// Mapeamento da peça de subcomponentes por quantidade
+	// Mapeamento da peca de subcomponentes por quantidade
 	@Override
 	public HashMap<Part, Integer> getSubcomponentes() {
 		return this.subPartQuant;
 	}
 
-	// Informa se a peça é primitiva
+	// Informa se a peca eh primitiva
 	@Override
 	public boolean isPrimitiva() {
 		return this.subPartQuant.isEmpty();
 	}
 
-	// Informa se já está registrado em um PartRepository
+	// Informa se ja esta registrado em um PartRepository
 	@Override
 	public boolean isRegistrado() {
 		return this.repositorio != null;
 	}
 
-	// Registra um PartRepository se não estiver registrado
+	// Registra um PartRepository se nao estiver registrado
 	@Override
 	public void setPartRepository(PartRepository partRepository) throws PartRegistradaException {
 		if (this.isRegistrado()) {

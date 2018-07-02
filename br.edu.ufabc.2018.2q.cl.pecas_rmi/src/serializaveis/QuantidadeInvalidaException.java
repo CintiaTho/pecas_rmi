@@ -1,5 +1,5 @@
 /**
- * QuantidadeInvalidaException para alterações não permitidas.
+ * QuantidadeInvalidaException para alteracoes nao permitidas.
  */
 
 /**

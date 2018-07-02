@@ -24,11 +24,10 @@ public class ServerPartRepository {
 			PartRepository stub = (PartRepository)UnicastRemoteObject.exportObject(partRepos, 0);
 			//Registra (binds) o stub no registry
 			Registry registry = LocateRegistry.getRegistry();
-			registry.bind("calculadora", stub);
+			registry.bind("partRepos", stub);
 			System.out.println("Servidor iniciado.");
 		} catch (Exception e) {
-			System.err.println("Ocorreu um erro no servidor: " +
-					e.toString());
+			System.err.println("Ocorreu um erro no servidor: " + e.toString());
 		}
   }
 }
