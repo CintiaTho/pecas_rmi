@@ -4,16 +4,17 @@
 
 /**
  * @author Cintia Lumi Tho - RA 1103514
- *
+ * @author Luiz Felipe M. Garcia - RA 11028613
  */
 
 package serializaveis;
 
+import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.server.UID;
 import java.util.HashSet;
 
-public interface PartRepository extends java.io.Serializable {
+public interface PartRepository extends Remote {
 
 	// Busca Part por UID
 	public Part getPartPorUID(UID uid) throws RemoteException;

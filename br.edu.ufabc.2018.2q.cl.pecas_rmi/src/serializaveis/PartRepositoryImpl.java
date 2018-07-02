@@ -4,7 +4,7 @@
 
 /**
  * @author Cintia Lumi Tho - RA 1103514
- *
+ * @author Luiz Felipe M. Garcia - RA 11028613
  */
 
 package serializaveis;
@@ -28,7 +28,7 @@ public class PartRepositoryImpl implements PartRepository {
 		this.parts = new HashSet<Part>();
 		this.uid_part = new HashMap<UID, Part>();
 	}
-	
+
 	// Busca Part por UID
 	@Override
 	public Part getPartPorUID(UID uid) {
