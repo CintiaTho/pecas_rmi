@@ -14,7 +14,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.UID;
 import java.util.HashSet;
 
-public interface PartRepository extends Remote {
+public interface PartRepository extends Remote, java.io.Serializable {
 
 	// Busca Part por UID
 	public Part getPartPorUID(UID uid) throws RemoteException;

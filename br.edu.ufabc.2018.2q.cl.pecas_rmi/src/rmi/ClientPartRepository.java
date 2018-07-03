@@ -17,11 +17,12 @@ import serializaveis.*;
 public class ClientPartRepository {
 	public static void main(String[] args) {
 		try {
-
+			
+			// AQUI FAREI UM MÉTODO PARA ENCONTRAR OS REPOSITORIOS DISPONIVEIS
 			// Localiza o registry. Eh possivel usar endereço/IP porta
 			Registry registry = LocateRegistry.getRegistry(null);
 			// Consulta o registry e obtem o stub para o objeto remoto
-			PartRepository partRepos = (PartRepository) registry.lookup("partRepos");
+			PartRepository partRepos = (PartRepository) registry.lookup("partRepos1");
 			// A partir deste momento, chamadas ao PartRepository podem ser
 			// feitas como qualquer chamada a metodos
 			

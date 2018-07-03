@@ -18,13 +18,19 @@ import serializaveis.*;
 public class ServerPartRepository {
 	public static void main(String args[]) {
 		try {
-			//Crio o objeto servidor
-			PartRepositoryImpl partRepos = new PartRepositoryImpl("partRepos");
+			//Crio o objeto servidor: criando 3 Repositórios de peça
+			PartRepositoryImpl partRepos1 = new PartRepositoryImpl("partRepos1");
+			PartRepositoryImpl partRepos2 = new PartRepositoryImpl("partRepos2");
+			PartRepositoryImpl partRepos3 = new PartRepositoryImpl("partRepos3");
 			//Criamos o stub do objeto que sera registrado
-			PartRepository stub = (PartRepository)UnicastRemoteObject.exportObject(partRepos, 0);
+			PartRepository stub1 = (PartRepository)UnicastRemoteObject.exportObject(partRepos1, 0);
+			PartRepository stub2 = (PartRepository)UnicastRemoteObject.exportObject(partRepos2, 0);
+			PartRepository stub3 = (PartRepository)UnicastRemoteObject.exportObject(partRepos3, 0);
 			//Registra (binds) o stub no registry
 			Registry registry = LocateRegistry.getRegistry();
-			registry.bind("partRepos", stub);
+			registry.bind("partRepos1", stub1);
+			registry.bind("partRepos2", stub2);
+			registry.bind("partRepos3", stub3);
 			System.out.println("Servidor iniciado.");
 		} catch (Exception e) {
 			System.err.println("Ocorreu um erro no servidor: " + e.toString());
