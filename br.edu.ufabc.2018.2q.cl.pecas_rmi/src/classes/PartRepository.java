@@ -19,15 +19,15 @@ public interface PartRepository extends Remote{
 	// Busca Part por UID
 	public Part getPartPorUID(UID uid) throws RemoteException;
 
-	// Nome do repositório
+	// Nome do repositorio
 	public String getPartRepositoryNome() throws RemoteException;
 
-	// Conjunto de peças do repositório
+	// Conjunto de pecas do repositorio
 	public HashSet<Part> getPartRepositoryParts() throws RemoteException;
 
-	// Código do repositório
+	// Codigo do repositorio
 	public UID getPartRepositoryUID() throws RemoteException;
 
-	// Registra Part em repositório
+	// Registra Part em repositorio
 	public void registraPart(Part part) throws RemoteException, PartRegistradaException;
 }
