@@ -15,7 +15,9 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Scanner;
 
-import classes.*;
+import classes.PartRepository;
+import classes.PartRepositoryImpl;
+import classes.QuitException;
 
 public class ServerPartRepository {
 	public static void main(String args[]) {
@@ -119,16 +121,15 @@ public class ServerPartRepository {
 					break;
 				//-------------------------------------------------
 				case "quit":
-					throw new RuntimeException(comando);
+					throw new QuitException();
 				//-------------------------------------------------
 				default:
 					System.out.println("Este não é um comando válido!");
 				}
 			}
 			
-		}catch (RuntimeException e) {
-			if(e.getMessage() == comando) System.out.println("Encerrada sua sessão com sucesso!");
-			else System.err.println("Ocorreu um erro: " + e.toString());
+		}catch (QuitException e) {
+			System.out.println("Encerrada sua sessão com sucesso!");
 		}catch (AlreadyBoundException e) {
 			System.err.println("Já está rodando uma instância do servidor.");
 		}catch (Exception e) {

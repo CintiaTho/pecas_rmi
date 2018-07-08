@@ -18,6 +18,7 @@ import java.util.Scanner;
 
 import classes.Part;
 import classes.PartRepository;
+import classes.QuitException;
 
 public class ClientPartRepository {
 	public static void main(String[] args) {
@@ -69,11 +70,8 @@ public class ClientPartRepository {
 				//-------------------------------------------------
 				case "bind":
 					try {
-						try {
-							System.out.println("Repositório conectado: " + partRepos.getPartRepositoryNome());
-						} catch (NullPointerException e) {
-							System.out.println("Conectado a nenhum repositório.");
-						}
+						if(!partRepos.equals(null)) System.out.println("Repositório conectado: " + partRepos.getPartRepositoryNome());
+						else System.out.println("Conectado a nenhum repositório.");
 
 						boundNames = registry.list();
 						System.out.println("Repositórios encontrados");
@@ -94,8 +92,6 @@ public class ClientPartRepository {
 					} catch (RemoteException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-					} catch (NotBoundException e) {
-						System.err.println("Nome incorreto!");
 					}
 					break;
 				//-------------------------------------------------
@@ -135,15 +131,14 @@ public class ClientPartRepository {
 					break;
 				//-------------------------------------------------
 				case "quit":
-					throw new RuntimeException(comando);
+					throw new QuitException();
 				//-------------------------------------------------
 				default:
 					System.out.println("Este não é um comando válido!");
 				}
 			}
-		} catch (RuntimeException e) {
-			if(e.getMessage() == comando) System.out.println("Encerrada sua sessão com sucesso!");
-			else System.err.println("Ocorreu um erro: " + e.toString());
+		} catch (QuitException e) {
+			System.out.println("Encerrada sua sessão com sucesso!");
 		} catch (Exception e) {
 			System.err.println("Ocorreu um erro no cliente: " + e.toString());
 		}
