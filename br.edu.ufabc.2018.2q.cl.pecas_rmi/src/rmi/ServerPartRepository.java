@@ -35,11 +35,13 @@ public class ServerPartRepository {
 			System.out.println("Digite: 'commands' para visualisar a lista de possíveis comandos permitidos ao usuário.");
 			System.out.println("Caso já os conheça, digite a primeira ação que deseja realizar e aperte enter...");
 			while (comando != "quit") {
+				System.out.println();
 				num = registry.list().length;
 				System.out.println("Servidor(es) rodando: " + num);
 				System.out.print("Comando: ");
 				comando = entrada.nextLine();
 				System.out.println();
+				
 				switch (comando){
 				case "commands":
 					if(num == 0) {
@@ -57,7 +59,7 @@ public class ServerPartRepository {
 						System.out.println("quit - Terminar esta sessão");
 					}
 					break;
-
+				//-------------------------------------------------
 				case "reload":
 					if(num != 0) {
 						boundNames = registry.list();
@@ -78,12 +80,12 @@ public class ServerPartRepository {
 							stub = (PartRepository)UnicastRemoteObject.exportObject(partRepos, 0);
 							//Registra (binds) o stub no registry
 							registry.rebind(nome, stub);
-							System.out.println("Servidor-Repositório "+valor+" reiniciado.");
+							System.out.println("Servidor-Repositório "+num+" reiniciado.");
 						}
 						else System.out.println("Nome de Servidor incorreto!");
 					}
 					break;
-
+				//-------------------------------------------------
 				case "create":
 					valor = num+1;
 					//Crio o objeto servidor: criando 1 Repositorio de peca
@@ -95,7 +97,7 @@ public class ServerPartRepository {
 					registry.bind(nome, stub);
 					System.out.println("Servidor-Repositório "+valor+" iniciado.");
 					break;
-
+				//-------------------------------------------------
 				case "off":
 					if(num != 0) {
 						int ok = 0;
@@ -115,10 +117,10 @@ public class ServerPartRepository {
 						else System.out.println("Nome de Servidor incorreto!");					
 					}
 					break;
-
+				//-------------------------------------------------
 				case "quit":
 					throw new RuntimeException(comando);
-
+				//-------------------------------------------------
 				default:
 					System.out.println("Este não é um comando válido!");
 				}
