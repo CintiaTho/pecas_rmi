@@ -7,7 +7,7 @@
  * @author Luiz Felipe M. Garcia - RA 11028613
  */
 
-package serializaveis;
+package classes;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UID;

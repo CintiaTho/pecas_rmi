@@ -13,7 +13,8 @@ import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
 
-import serializaveis.*;
+import classes.PartRepositoryImpl;
+import classes.*;
 
 public class ServerPartRepository {
 	public static void main(String args[]) {
@@ -28,9 +29,9 @@ public class ServerPartRepository {
 			PartRepository stub3 = (PartRepository)UnicastRemoteObject.exportObject(partRepos3, 0);
 			//Registra (binds) o stub no registry
 			Registry registry = LocateRegistry.getRegistry();
-			registry.bind("partRepos1", stub1);
-			registry.bind("partRepos2", stub2);
-			registry.bind("partRepos3", stub3);
+			registry.rebind("partRepos1", stub1);
+			registry.rebind("partRepos2", stub2);
+			registry.rebind("partRepos3", stub3);
 			System.out.println("Servidor iniciado.");
 		} catch (Exception e) {
 			System.err.println("Ocorreu um erro no servidor: " + e.toString());

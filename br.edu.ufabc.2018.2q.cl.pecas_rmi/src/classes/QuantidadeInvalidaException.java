@@ -7,7 +7,7 @@
  * @author Luiz Felipe M. Garcia - RA 11028613
  */
 
-package serializaveis;
+package classes;
 
 public class QuantidadeInvalidaException extends RuntimeException {
 	static final long serialVersionUID = 18687092928593L;

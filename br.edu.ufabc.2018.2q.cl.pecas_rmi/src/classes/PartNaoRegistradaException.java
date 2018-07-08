@@ -7,7 +7,7 @@
  * @author Luiz Felipe M. Garcia - RA 11028613
  */
 
-package serializaveis;
+package classes;
 
 public class PartNaoRegistradaException extends RuntimeException {
 	static final long serialVersionUID = 538445569L;
