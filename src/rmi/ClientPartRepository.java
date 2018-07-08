@@ -12,7 +12,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.Scanner;
 
-import classes.*;
+import serializaveis.*;
 
 public class ClientPartRepository {
 	public static void main(String[] args) {
@@ -29,36 +29,28 @@ public class ClientPartRepository {
 			ClientCommand cc = new ClientCommand();
 			Scanner entrada = new Scanner(System.in);
 			String comando = "";
-			System.out.println("Digite: 'commands' para visualisar a lista de possíveis comandos permitidos ao usuário.");
+			System.out.println("Digite: 'Commands' para visualisar a lista de possíveis comandos permitidos ao usuário.");
 			System.out.println("Caso já os conheça, digite a primeira ação que deseja realizar e aperte enter...");
 
 			while (comando != "quit") {
-				comando = entrada.nextLine();
+				comando = entrada.next();
 				switch (comando){
-					case "commands":
+					case "Commands":
 						cc.command();
-						break;
 					case "bind":
 						cc.bind();
-						break;
 					case "listp":
 						cc.listp();
-						break;
 					case "getp":
 						cc.getp();
-						break;
 					case "showp":
 						cc.showp();
-						break;
 					case "clearlist":
 						cc.clearlist();
-						break;
 					case "addsubpart":
 						cc.addsubpart();
-						break;
 					case "addp":
 						cc.addp();
-						break;
 					default:
 						System.out.println("Este não é um comando válido!");
 				}
