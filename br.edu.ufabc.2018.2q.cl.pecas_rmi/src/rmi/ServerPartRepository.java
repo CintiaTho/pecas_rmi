@@ -13,7 +13,7 @@ import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
 
-import serializaveis.*;
+import classes.*;
 
 public class ServerPartRepository {
 	public static void main(String args[]) {

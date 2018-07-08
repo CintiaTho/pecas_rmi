@@ -12,7 +12,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.Scanner;
 
-import serializaveis.*;
+import classes.*;
 
 public class ClientPartRepository {
 	public static void main(String[] args) {
@@ -37,20 +37,28 @@ public class ClientPartRepository {
 				switch (comando){
 					case "Commands":
 						cc.command();
+						break;
 					case "bind":
 						cc.bind();
+						break;
 					case "listp":
 						cc.listp();
+						break;
 					case "getp":
 						cc.getp();
+						break;
 					case "showp":
 						cc.showp();
+						break;
 					case "clearlist":
 						cc.clearlist();
+						break;
 					case "addsubpart":
 						cc.addsubpart();
+						break;
 					case "addp":
 						cc.addp();
+						break;
 					default:
 						System.out.println("Este não é um comando válido!");
 				}
