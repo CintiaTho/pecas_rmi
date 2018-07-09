@@ -25,7 +25,7 @@ public class ServerPartRepository {
 		String comando = "";
 		int valor=0;
 		int num;
-		String nome;
+		String nome, text;
 		Registry registry;
 		String[] boundNames;
 
@@ -82,22 +82,28 @@ public class ServerPartRepository {
 							stub = (PartRepository)UnicastRemoteObject.exportObject(partRepos, 0);
 							//Registra (binds) o stub no registry
 							registry.rebind(nome, stub);
-							System.out.println("Servidor-Repositório "+num+" reiniciado.");
+							System.out.println("Servidor-Repositório "+ num +" reiniciado.");
 						}
-						else System.out.println("Nome de Servidor incorreto!");
+						else System.out.println("Ação inválida: Nome de Servidor incorreto!");
 					}
 					break;
 				//-------------------------------------------------
 				case "create":
-					valor = num+1;
-					//Crio o objeto servidor: criando 1 Repositorio de peca
-					nome = "S"+String.valueOf(valor)+"_PartRepos";
-					partRepos = new PartRepositoryImpl(nome);
-					//Criamos o stub do objeto que sera registrado
-					stub = (PartRepository)UnicastRemoteObject.exportObject(partRepos, 0);
-					//Registra (binds) o stub no registry
-					registry.bind(nome, stub);
-					System.out.println("Servidor-Repositório "+valor+" iniciado.");
+					System.out.print("Quer realmente realizar esta ação? (s/n)");
+					text = entrada.nextLine();
+					if(text.equals("s")){
+						valor = num+1;
+						//Crio o objeto servidor: criando 1 Repositorio de peca
+						nome = "S"+String.valueOf(valor)+"_PartRepos";
+						partRepos = new PartRepositoryImpl(nome);
+						//Criamos o stub do objeto que sera registrado
+						stub = (PartRepository)UnicastRemoteObject.exportObject(partRepos, 0);
+						//Registra (binds) o stub no registry
+						registry.bind(nome, stub);
+						System.out.println("Servidor-Repositório "+valor+" iniciado.");
+					}
+					if(text.equals("n")) System.out.println("Operação cancelada!");
+					else System.out.println("Comando inválido, operação cancelada!");
 					break;
 				//-------------------------------------------------
 				case "off":
@@ -116,7 +122,7 @@ public class ServerPartRepository {
 							registry.unbind(nome);
 							System.out.println("Servidor-Repositório "+valor+" desligado.");
 						}
-						else System.out.println("Nome de Servidor incorreto!");					
+						else System.out.println("Ação inválida: Nome de Servidor incorreto!");					
 					}
 					break;
 				//-------------------------------------------------
