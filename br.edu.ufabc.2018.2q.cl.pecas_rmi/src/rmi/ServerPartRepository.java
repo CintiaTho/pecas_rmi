@@ -21,6 +21,7 @@ import classes.QuitException;
 
 public class ServerPartRepository {
 	public static void main(String args[]) {
+		//Criacao de variaveis de trabalho dos metodos
 		Scanner entrada = new Scanner(System.in);
 		String comando = "";
 		int valor=0;
@@ -30,13 +31,19 @@ public class ServerPartRepository {
 		String[] boundNames;
 
 		try {
+			//variaveis atuais do servidor: registry, repositorio e stub
 			registry = LocateRegistry.getRegistry();
 			num = registry.list().length;
 			PartRepositoryImpl partRepos;
 			PartRepository stub;
+			
+			//texto inicial explicativo sobre o funcionamento da interface
 			System.out.println("Digite: 'commands' para visualisar a lista de possíveis comandos permitidos ao usuário.");
 			System.out.println("Caso já os conheça, digite a primeira ação que deseja realizar e aperte enter...");
+			
+			//loop principal para receber os comandos do usuario e mostrar informacoes
 			while (comando != "quit") {
+				//informacoes que sempre aparecerao ao usuario
 				System.out.println();
 				num = registry.list().length;
 				System.out.println("Servidor(es) rodando: " + num);
@@ -44,6 +51,7 @@ public class ServerPartRepository {
 				comando = entrada.nextLine();
 				System.out.println();
 				
+				//switch-case dos comandos possiveis
 				switch (comando){
 				case "commands":
 					if(num == 0) {

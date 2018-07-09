@@ -22,24 +22,31 @@ import classes.QuitException;
 
 public class ClientPartRepository {
 	public static void main(String[] args) {
-		//Criacao das principais variaveis utilizadas pelo cliente
+		//Criacao de variaveis de trabalho dos metodos
 		Scanner entrada = new Scanner(System.in);
 		String comando = "";
 		String text="";
 		int num=0, ok=0;
+		Registry registry;
+		String[] boundNames;
 
-		//variaveis atuais do cliente
+		//variaveis atuais do cliente: peca, subpecas e repositorio
 		Part peca = null;
 		PartRepository partRepos = null;
 		HashMap<Part, Integer> list_subpecas = new HashMap<Part, Integer>();
-
+		
+		//texto inicial explicativo sobre o funcionamento da interface
 		System.out.println("Digite: 'commands' para visualisar a lista de possíveis comandos permitidos ao usuário.");
 		System.out.println("Caso já os conheça, digite a primeira ação que deseja realizar e aperte enter...");
+		
 		try {
-			Registry registry = LocateRegistry.getRegistry(null);
-			String[] boundNames = registry.list();
-
+			//conexao com o registry e lista de servidores ativos nele
+			registry = LocateRegistry.getRegistry(null);
+			boundNames = registry.list();
+			
+			//loop principal para receber os comandos do usuario e mostrar informacoes
 			while (comando != "quit") {
+				//informacoes que sempre aparecerao ao usuario
 				System.out.println();
 				try {
 					System.out.println("Servidor conectado: " + partRepos.getPartRepositoryNome());
@@ -50,7 +57,8 @@ public class ClientPartRepository {
 				System.out.print("Comando: ");
 				comando = entrada.nextLine();
 				System.out.println();
-
+				
+				//switch-case dos comandos possiveis
 				switch (comando){
 				case "commands":
 					if(partRepos == null) {
@@ -109,14 +117,16 @@ public class ClientPartRepository {
 						Iterator<Part> iterator = partRepos.getPartRepositoryParts().iterator();
 						if(!iterator.hasNext()) System.out.println("Não há peças neste repositório.");
 						else {
-							for (iterator = partRepos.getPartRepositoryParts().iterator();iterator.hasNext();) {
+							for (iterator = partRepos.getPartRepositoryParts().iterator(); iterator.hasNext();) {
 								Part part = iterator.next();
 								System.out.println("  " + part.getPartUID());
 								System.out.println("	- " + part.getPartNome());
 								System.out.println("	- " + part.getPartDescricao());
-								HashMap<Part, Integer> sub = part.getSubcomponentes();
-								if(sub.isEmpty()) System.out.println("Peça Primária - não possui subpeças.");
-								else System.out.println("Peça possui "+ sub.size()+" subpeças.");
+								if(part.isPrimitiva()) System.out.println("Peça Primária - não possui subpeças.");
+								else {
+									HashMap<Part, Integer> sub = part.getSubcomponentes();
+									System.out.println("Peça possui "+ sub.size() +" subpeças.");
+								}
 								System.out.println("");
 							}
 						}
@@ -124,46 +134,54 @@ public class ClientPartRepository {
 					break;
 				//-------------------------------------------------
 				case "getp":
-					//Procurar em todos os repositorios, devolver a peça e seu repos., mantendo o bind original;
 					if(partRepos != null) {
 						System.out.print("Diga o código da peça que quer buscar: ");
+						//!!!Procurar em todos os repositorios, devolver a peça e seu repos., mantendo o bind original;!!!!
 						UID id = new UID();
 						peca = partRepos.getPartPorUID(id);
+						//!!!!!!!!!!
 					} else System.out.println("Ação inválida: Não está conectado à um repositório.");
 					break;
 				//-------------------------------------------------
 				case "showp":
 					if(peca != null) {
+						System.out.println("Sua peça atual:");
 						System.out.println("ID: " + peca.getPartUID());
 						System.out.println(" - Nome: " + peca.getPartNome());
 						System.out.println(" - Descrição: " + peca.getPartDescricao());
 						System.out.println(" - Repositório: " + peca.getPartRepository());
 
-						HashMap<Part, Integer> sub = peca.getSubcomponentes();
-						if(sub.isEmpty()) System.out.println("Peça Primária - não possui subpeças.");
+						if(peca.isPrimitiva()) System.out.println("Peça Primária - não possui subpeças.");
 						else {
 							System.out.println(" - Lista de subpeças:");
-							Set<Part> chaves = sub.keySet();  
-							for (Iterator<Part> it = chaves.iterator(); it.hasNext();){  
-								Part chave = it.next();  
-								if(chave != null){  
-									System.out.println(); 
-								}
+							HashMap<Part, Integer> sub = peca.getSubcomponentes();
+							for (HashMap.Entry<Part, Integer> it : sub.entrySet()){  
+								Part part = it.getKey();
+								//Integer quant = it.getValue(); 
+								System.out.println("   - id:" + part.getPartUID());
+								System.out.println("   - nome:" + part.getPartNome());
+								System.out.println("   - quant:" + it.getValue());
+								System.out.println();
 							}
 						}
+						System.out.println();
 					} else System.out.println("Ação inválida: Ainda não selecionada uma peça para ser a atual.");
 					break;
 				//-------------------------------------------------
 				case "showlsp":
 					if(list_subpecas.isEmpty()) System.out.println("A lista está vazia.");
 					else {
-						Part i = peca;
-						//for (Part i : list_subpecas) {
-							System.out.println("ID: " + i.getPartUID());
-							System.out.println(" - Nome: " + i.getPartNome());
-							System.out.println(" - Descrição: " + i.getPartDescricao());
-							System.out.println(" - Repositório: " + i.getPartRepository());
-						//}
+						System.out.println("Sua lista de subpeças atual:");
+						for (HashMap.Entry<Part, Integer> it : list_subpecas.entrySet()){  
+							Part part = it.getKey();
+							Integer quant = it.getValue();
+							System.out.println("id: " + part.getPartUID());
+							System.out.println(" - nome: " + part.getPartNome());
+							System.out.println(" - quant:" + quant);
+							System.out.println(" - descrição: " + part.getPartDescricao());
+							System.out.println(" - repositório: " + part.getPartRepository());
+							System.out.println();
+						}
 					}
 					break;
 				//-------------------------------------------------
@@ -185,7 +203,8 @@ public class ClientPartRepository {
 					if(peca != null) {
 						System.out.print("Quantas unidades de "+ peca.getPartNome() + "quer adicionar na lista de subpeças atual?");
 						num = entrada.nextInt();
-						//list_subpecas.add(peca);
+						if(num > 0) list_subpecas.put(peca, num);
+						else System.out.println("Ação inválida: Quantidade nula ou negativa.");
 					} else System.out.println("Ação inválida: Ainda não selecionada uma peça para ser a atual.");
 					break;
 				//-------------------------------------------------
