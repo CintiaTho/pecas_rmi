@@ -89,7 +89,7 @@ public class ServerPartRepository {
 							registry.rebind(nome, stub);
 							System.out.println("Servidor-Repositório "+ num +" reiniciado.");
 						} else System.out.println("Ação inválida: Nome de Servidor incorreto!");
-					} System.out.println("Não foram encontrados Repositórios ativos.");
+					} else System.out.println("Não foram encontrados Repositórios ativos.");
 					break;
 				//-------------------------------------------------
 				case "create":
@@ -123,7 +123,7 @@ public class ServerPartRepository {
 							registry.unbind(nome);
 							System.out.println("Servidor-Repositório "+valor+" desligado.");
 						} else System.out.println("Ação inválida: Nome de Servidor incorreto!");					
-					} System.out.println("Não foram encontrados Repositórios ativos.");
+					} else System.out.println("Não foram encontrados Repositórios ativos.");
 					break;
 				//-------------------------------------------------
 				case "quit":
