@@ -8,13 +8,13 @@
  */
 
 package rmi;
+import java.rmi.ConnectException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UID;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Scanner;
-import java.util.Set;
 
 import classes.Part;
 import classes.PartRepository;
@@ -85,30 +85,29 @@ public class ClientPartRepository {
 					else System.out.println("Não está conectado à um repositório.");
 
 					boundNames = registry.list();
-					System.out.println("Repositórios encontrados");
-					for (String name : boundNames) System.out.println(" - "+name);
+					if(boundNames.length == 0) System.out.println("Não foram encontrados Repositórios disponíveis.");
+					else{
+						System.out.println("Repositórios encontrados:");
+						for (String name : boundNames) System.out.println(" - "+name);
 
-					try {
-						System.out.print("Diga o nome do repositório que quer se conectar: ");
-						text = entrada.nextLine();
-						if(text.equals(partRepos.getPartRepositoryNome())) System.out.println("Você já está conectado a este repositório.");
-						else {
-							for (String name : boundNames) {
-								if(name.equals(text)) ok=1;
+						try {
+							System.out.print("Diga o nome do repositório que quer se conectar: ");
+							text = entrada.nextLine();
+							if(text.equals(partRepos.getPartRepositoryNome())) System.out.println("Você já está conectado a este repositório.");
+							else {
+								for (String name : boundNames) if(name.equals(text)) ok=1;
+								if(ok != 0) {
+									partRepos = (PartRepository) registry.lookup(text);
+									System.out.println("Conectado à "+text);
+								} else System.out.println("Ação inválida: Nome de Servidor incorreto!");
 							}
+						} catch (NullPointerException e) {
+							for (String name : boundNames) if(name.equals(text)) ok=1;
 							if(ok != 0) {
 								partRepos = (PartRepository) registry.lookup(text);
 								System.out.println("Conectado à "+text);
 							} else System.out.println("Ação inválida: Nome de Servidor incorreto!");
 						}
-					} catch (NullPointerException e) {
-						for (String name : boundNames) {
-							if(name.equals(text)) ok=1;
-						}
-						if(ok != 0) {
-							partRepos = (PartRepository) registry.lookup(text);
-							System.out.println("Conectado à "+text);
-						} else System.out.println("Ação inválida: Nome de Servidor incorreto!");
 					}
 					break;
 				//-------------------------------------------------
@@ -169,7 +168,7 @@ public class ClientPartRepository {
 					break;
 				//-------------------------------------------------
 				case "showlsp":
-					if(list_subpecas.isEmpty()) System.out.println("A lista está vazia.");
+					if(list_subpecas.isEmpty()) System.out.println("A sua lista está vazia.");
 					else {
 						System.out.println("Sua lista de subpeças atual:");
 						for (HashMap.Entry<Part, Integer> it : list_subpecas.entrySet()){  
@@ -186,15 +185,15 @@ public class ClientPartRepository {
 					break;
 				//-------------------------------------------------
 				case "clearlist":
-					if(list_subpecas.isEmpty()) System.out.println("A lista já está vazia.");
+					if(list_subpecas.isEmpty()) System.out.println("A sua lista já está vazia.");
 					else {
 						System.out.print("Quer realmente realizar esta ação? (s/n)");
 						text = entrada.nextLine();
 						if(text.equals("s")){
 							list_subpecas.clear();
-							System.out.println("A lista limpa!");
+							System.out.println("A lista foi limpa com sucesso!");
 						}
-						if(text.equals("n")) System.out.println("Operação cancelada!");
+						else if(text.equals("n")) System.out.println("Operação cancelada!");
 						else System.out.println("Comando inválido, operação cancelada!");
 					}
 					break;
@@ -209,6 +208,8 @@ public class ClientPartRepository {
 					break;
 				//-------------------------------------------------
 				case "addp":
+					//Adicionar uma nova atraves da insercao de dados pelo usuario e/ou
+					//permitir inserir list_subpecas em uma peca ja existente 
 					if(partRepos != null) {
 						if(peca != null) {
 							partRepos.registraPart(peca);

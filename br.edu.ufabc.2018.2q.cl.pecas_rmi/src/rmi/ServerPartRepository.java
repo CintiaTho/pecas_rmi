@@ -80,10 +80,7 @@ public class ServerPartRepository {
 						
 						System.out.print("Diga o nome do repositório desejado: ");
 						nome = entrada.nextLine();
-						for (String name : boundNames) {
-							if(name.equals(nome)) ok=1;
-						}
-						
+						for (String name : boundNames) if(name.equals(nome)) ok=1;
 						if(ok != 0) {
 							partRepos = new PartRepositoryImpl(nome);
 							//Criamos o stub do objeto que sera registrado
@@ -91,9 +88,8 @@ public class ServerPartRepository {
 							//Registra (binds) o stub no registry
 							registry.rebind(nome, stub);
 							System.out.println("Servidor-Repositório "+ num +" reiniciado.");
-						}
-						else System.out.println("Ação inválida: Nome de Servidor incorreto!");
-					}
+						} else System.out.println("Ação inválida: Nome de Servidor incorreto!");
+					} System.out.println("Não foram encontrados Repositórios ativos.");
 					break;
 				//-------------------------------------------------
 				case "create":
@@ -109,9 +105,8 @@ public class ServerPartRepository {
 						//Registra (binds) o stub no registry
 						registry.bind(nome, stub);
 						System.out.println("Servidor-Repositório "+valor+" iniciado.");
-					}
-					if(text.equals("n")) System.out.println("Operação cancelada!");
-					else System.out.println("Comando inválido, operação cancelada!");
+					} else if(text.equals("n")) System.out.println("Operação cancelada!");
+					  else System.out.println("Comando inválido, operação cancelada!");
 					break;
 				//-------------------------------------------------
 				case "off":
@@ -122,16 +117,13 @@ public class ServerPartRepository {
 						for (String name : boundNames) System.out.println(" - "+name);
 						System.out.print("Diga o nome do repositório desejado: ");
 						nome = entrada.nextLine();
-						for (String name : boundNames) {
-							if(name.equals(nome)) ok=1;
-						}
+						for (String name : boundNames) if(name.equals(nome)) ok=1;
 						if(ok != 0) {
 							//Deleta no registry
 							registry.unbind(nome);
 							System.out.println("Servidor-Repositório "+valor+" desligado.");
-						}
-						else System.out.println("Ação inválida: Nome de Servidor incorreto!");					
-					}
+						} else System.out.println("Ação inválida: Nome de Servidor incorreto!");					
+					} System.out.println("Não foram encontrados Repositórios ativos.");
 					break;
 				//-------------------------------------------------
 				case "quit":
@@ -142,11 +134,11 @@ public class ServerPartRepository {
 				}
 			}
 			
-		}catch (QuitException e) {
-			System.out.println("Encerrada sua sessão com sucesso!");
-		}catch (AlreadyBoundException e) {
+		} catch (AlreadyBoundException e) {
 			System.err.println("Já está rodando uma instância do servidor.");
-		}catch (Exception e) {
+		} catch (QuitException e) {
+			System.out.println("Encerrada sua sessão com sucesso!");
+		} catch (Exception e) {
 			System.err.println("Ocorreu um erro no servidor: " + e.toString());
 		}
 	}
