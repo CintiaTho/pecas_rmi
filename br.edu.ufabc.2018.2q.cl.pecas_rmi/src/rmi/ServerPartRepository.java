@@ -9,10 +9,11 @@
 
 package rmi;
 
-import java.rmi.registry.Registry;
 import java.rmi.AlreadyBoundException;
 import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.List;
 import java.util.Scanner;
 
 import classes.PartRepository;
@@ -24,11 +25,12 @@ public class ServerPartRepository {
 		//Criacao de variaveis de trabalho dos metodos
 		Scanner entrada = new Scanner(System.in);
 		String comando = "";
-		int valor=0;
+		int valor_repos=0, valor_server = 0;
 		int num;
 		String nome, text;
 		Registry registry;
-		String[] boundNames;
+		String[] boundNames = null;
+		List<String> listRepos = null;
 
 		try {
 			//variaveis atuais do servidor: registry, repositorio e stub
@@ -80,15 +82,20 @@ public class ServerPartRepository {
 						
 						System.out.print("Diga o nome do repositório desejado: ");
 						nome = entrada.nextLine();
-						for (String name : boundNames) if(name.equals(nome)) ok=1;
+						for (String name1 : boundNames) {
+							for(String name2 : listRepos) {
+								if(name1.equals(nome) && name2.equals(nome) ) ok=1;
+							}
+						}
 						if(ok != 0) {
 							partRepos = new PartRepositoryImpl(nome);
 							//Criamos o stub do objeto que sera registrado
 							stub = (PartRepository)UnicastRemoteObject.exportObject(partRepos, 0);
 							//Registra (binds) o stub no registry
 							registry.rebind(nome, stub);
+							listRepos.add(nome);
 							System.out.println("Servidor-Repositório "+ num +" reiniciado.");
-						} else System.out.println("Ação inválida: Nome de Servidor incorreto!");
+						} else System.out.println("Ação inválida: Nome de Servidor incorreto ou pertence a outro Servidor!");
 					} else System.out.println("Não foram encontrados Repositórios ativos.");
 					break;
 				//-------------------------------------------------
@@ -96,15 +103,15 @@ public class ServerPartRepository {
 					System.out.print("Quer realmente realizar esta ação? (s/n)");
 					text = entrada.nextLine();
 					if(text.equals("s")){
-						valor = num+1;
+						valor_repos = num+1;
 						//Crio o objeto servidor: criando 1 Repositorio de peca
-						nome = "S"+String.valueOf(valor)+"_PartRepos";
+						nome = "S"+String.valueOf(valor_server)+"_PartRepos"+String.valueOf(valor_repos);
 						partRepos = new PartRepositoryImpl(nome);
 						//Criamos o stub do objeto que sera registrado
 						stub = (PartRepository)UnicastRemoteObject.exportObject(partRepos, 0);
 						//Registra (binds) o stub no registry
 						registry.bind(nome, stub);
-						System.out.println("Servidor-Repositório "+valor+" iniciado.");
+						System.out.println("Servidor-Repositório "+valor_repos+" iniciado.");
 					} else if(text.equals("n")) System.out.println("Operação cancelada!");
 					  else System.out.println("Comando inválido, operação cancelada!");
 					break;
@@ -121,13 +128,24 @@ public class ServerPartRepository {
 						if(ok != 0) {
 							//Deleta no registry
 							registry.unbind(nome);
-							System.out.println("Servidor-Repositório "+valor+" desligado.");
+							System.out.println("Servidor-Repositório "+valor_repos+" desligado.");
 						} else System.out.println("Ação inválida: Nome de Servidor incorreto!");					
 					} else System.out.println("Não foram encontrados Repositórios ativos.");
 					break;
 				//-------------------------------------------------
 				case "quit":
-					throw new QuitException();
+					System.out.print("Deseja realmente terminar sua sessão? Seus dados serão perdidos e seus repositórios apagados! (s/n)");
+					text = entrada.nextLine();
+					if(text.equals("s")){
+						for (String name : listRepos){
+							//Deleta no registry
+							registry.unbind(name);
+							System.out.println("Servidor-Repositório "+valor_repos+" desligado.");
+						}
+						throw new QuitException();
+					}
+					else if(text.equals("n")) System.out.println("Operação cancelada!");
+					else System.out.println("Comando inválido, operação cancelada!");
 				//-------------------------------------------------
 				default:
 					System.out.println("Este não é um comando válido!");

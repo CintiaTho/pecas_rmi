@@ -13,6 +13,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.UID;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map.Entry;
 
 public class PartRepositoryImpl implements PartRepository {
 	static final long serialVersionUID = 2306139568115548160L;
@@ -31,8 +32,12 @@ public class PartRepositoryImpl implements PartRepository {
 
 	// Busca Part por UID
 	@Override
-	public Part getPartPorUID(UID uid) {
-		return this.uid_part.get(uid);
+	public Part getPartPorUID(String text) {
+		for (Entry<UID, Part> it : uid_part.entrySet()){  
+			UID id = it.getKey();
+			if(id.equals(text)) return it.getValue();
+		}
+		return null;
 	}
 
 	// Nome do repositorio

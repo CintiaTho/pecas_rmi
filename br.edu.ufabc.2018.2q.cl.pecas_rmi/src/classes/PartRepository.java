@@ -17,7 +17,7 @@ import java.util.HashSet;
 public interface PartRepository extends Remote{
 
 	// Busca Part por UID
-	public Part getPartPorUID(UID uid) throws RemoteException;
+	public Part getPartPorUID(String text) throws RemoteException;
 
 	// Nome do repositorio
 	public String getPartRepositoryNome() throws RemoteException;
