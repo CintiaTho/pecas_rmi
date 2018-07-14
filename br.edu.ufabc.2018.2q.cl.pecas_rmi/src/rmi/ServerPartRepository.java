@@ -122,16 +122,18 @@ public class ServerPartRepository {
 						nome = entrada.nextLine();
 						
 						ok = 0;
-						int index = -1;
+						int index=0;
 						for(PartRepository name : listRepos) {
-							index++;
-							if(name.getPartRepositoryNome().equals(nome)) ok=1;
+							if(name.getPartRepositoryNome().equals(nome)) {
+								index = listRepos.indexOf(name);
+								ok=1;
+							}
 						}
 						
 						if(ok != 0) {
 							//Deleta no registry e na lista de repos.
 							registry.unbind(nome);
-							listRepos.remove(listRepos.get(index-1));
+							listRepos.remove(listRepos.get(index));
 							System.out.println("Repositório "+nome+" desligado.");
 						} else System.out.println("Ação inválida: Nome de Servidor incorreto!");					
 					} else System.out.println("Não foram encontrados Repositórios ativos.");
@@ -146,10 +148,10 @@ public class ServerPartRepository {
 						nome = entrada.nextLine();
 						
 						ok = 0;
-						PartRepository index;
+						int index=0;
 						for(PartRepository name : listRepos) {
 							if(name.getPartRepositoryNome().equals(nome)) {
-								index = name.getClass();
+								index = listRepos.indexOf(name);
 								ok=1;
 							}
 						}
