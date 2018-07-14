@@ -10,10 +10,11 @@
 package rmi;
 
 import java.rmi.AlreadyBoundException;
+import java.rmi.ConnectException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import classes.PartRepository;
@@ -25,19 +26,29 @@ public class ServerPartRepository {
 		//Criacao de variaveis de trabalho dos metodos
 		Scanner entrada = new Scanner(System.in);
 		String comando = "";
-		int valor_repos=0, valor_server = 0;
-		int num;
+		int valor_server=0, valor_repos=0;
+		int num, ok=0;
 		String nome, text;
 		Registry registry;
-		String[] boundNames = null;
-		List<String> listRepos = null;
+		//String[] boundNames = null;
+		ArrayList<PartRepository> listRepos = new ArrayList<>();
 
 		try {
+			//cada servidor cuida apenas dos seus repositorios
 			//variaveis atuais do servidor: registry, repositorio e stub
 			registry = LocateRegistry.getRegistry();
-			num = registry.list().length;
 			PartRepositoryImpl partRepos;
 			PartRepository stub;
+			
+			//obtendo um numero identificador para o servidor - se houvesse persistencia (com bd) seria atribuido automaticamente
+			num = 1;
+			for(String name : registry.list()) {
+				int n = Integer.parseInt(name.substring(1, name.indexOf("_")));
+				if(num <= n) {
+					num = n+1;
+				}
+			}
+			valor_server = num;
 			
 			//texto inicial explicativo sobre o funcionamento da interface
 			System.out.println("Digite: 'commands' para visualisar a lista de possíveis comandos permitidos ao usuário.");
@@ -47,8 +58,8 @@ public class ServerPartRepository {
 			while (comando != "quit") {
 				//informacoes que sempre aparecerao ao usuario
 				System.out.println();
-				num = registry.list().length;
-				System.out.println("Servidor(es) rodando: " + num);
+				System.out.println("Servidor: " + valor_server);
+				System.out.println("Repositório(s): " + listRepos.size());
 				System.out.print("Comando: ");
 				comando = entrada.nextLine();
 				System.out.println();
@@ -56,92 +67,119 @@ public class ServerPartRepository {
 				//switch-case dos comandos possiveis
 				switch (comando){
 				case "commands":
-					if(num == 0) {
-						System.out.println("Não há Servidor(es) rodando.");
+					if(listRepos.size() == 0) {
+						System.out.println("Não há Repositório(s) criados.");
 						System.out.println("Gostaria de: ");
-						System.out.println("create - Criar um novo Servidor-Repositório?");
+						System.out.println("create - Criar um novo Repositório?");
 						System.out.println("quit - Terminar esta sessão");
 					}
 					else {
-						System.out.println("Já existe(m): "+ num + " Servidor(es) rodando.");
+						System.out.println("Já existe(m): "+ listRepos.size() + " Repositório(s) criados.");
 						System.out.println("Gostaria de: ");
-						System.out.println("reload - Reiniciar uma instância (Servidor-Repositório)? *isto apagará os dados já inseridos;");
-						System.out.println("create - Criar um novo Servidor-Repositório?");
-						System.out.println("off - Desligar um Servidor-Repositório?");
-						System.out.println("quit - Terminar esta sessão");
+						System.out.println("create - Criar um Repositório;");
+						System.out.println("off - Desligar um Repositório;");
+						System.out.println("reload - listar e escolher reiniciar um Repositório *isto apagará os dados já inseridos;");
+						System.out.println("quit - Terminar esta sessão.");
 					}
-					break;
-				//-------------------------------------------------
-				case "reload":
-					if(num != 0) {
-						boundNames = registry.list();
-						int ok = 0;
-						
-						System.out.println("Repositórios encontrados");
-						for (String name : boundNames) System.out.println(" - "+name);
-						
-						System.out.print("Diga o nome do repositório desejado: ");
-						nome = entrada.nextLine();
-						for (String name1 : boundNames) {
-							for(String name2 : listRepos) {
-								if(name1.equals(nome) && name2.equals(nome) ) ok=1;
-							}
-						}
-						if(ok != 0) {
-							partRepos = new PartRepositoryImpl(nome);
-							//Criamos o stub do objeto que sera registrado
-							stub = (PartRepository)UnicastRemoteObject.exportObject(partRepos, 0);
-							//Registra (binds) o stub no registry
-							registry.rebind(nome, stub);
-							listRepos.add(nome);
-							System.out.println("Servidor-Repositório "+ num +" reiniciado.");
-						} else System.out.println("Ação inválida: Nome de Servidor incorreto ou pertence a outro Servidor!");
-					} else System.out.println("Não foram encontrados Repositórios ativos.");
 					break;
 				//-------------------------------------------------
 				case "create":
 					System.out.print("Quer realmente realizar esta ação? (s/n)");
 					text = entrada.nextLine();
 					if(text.equals("s")){
-						valor_repos = num+1;
-						//Crio o objeto servidor: criando 1 Repositorio de peca
+						if(listRepos.size() == 0) {
+							//refazer a verificação para atribuir numero ao server
+							//já que só agora estamos registrando um repos. no registry - nos mostrando para os outros;
+							//poderia ter sido criado um repositorio com o mesmo numero de servidor durante este periodo
+							num = 1;
+							for(String name : registry.list()) {
+								int n = Integer.parseInt(name.substring(1, name.indexOf("_")));
+								if(num <= n) {
+									num = n+1;
+								}
+							}
+							valor_server = num;
+						}
+						//Crio o objeto Repositorio de peca
+						valor_repos++;
 						nome = "S"+String.valueOf(valor_server)+"_PartRepos"+String.valueOf(valor_repos);
 						partRepos = new PartRepositoryImpl(nome);
 						//Criamos o stub do objeto que sera registrado
 						stub = (PartRepository)UnicastRemoteObject.exportObject(partRepos, 0);
 						//Registra (binds) o stub no registry
 						registry.bind(nome, stub);
-						System.out.println("Servidor-Repositório "+valor_repos+" iniciado.");
+						listRepos.add(stub);
+						System.out.println("Repositório "+nome+" iniciado.");
 					} else if(text.equals("n")) System.out.println("Operação cancelada!");
 					  else System.out.println("Comando inválido, operação cancelada!");
 					break;
 				//-------------------------------------------------
 				case "off":
-					if(num != 0) {
-						int ok = 0;
-						boundNames = registry.list();
+					if(listRepos.size() != 0) {
 						System.out.println("Repositórios encontrados:");
-						for (String name : boundNames) System.out.println(" - "+name);
+						for (PartRepository name : listRepos) System.out.println(" - "+name.getPartRepositoryNome());
 						System.out.print("Diga o nome do repositório desejado: ");
 						nome = entrada.nextLine();
-						for (String name : boundNames) if(name.equals(nome)) ok=1;
+						
+						ok = 0;
+						int index = -1;
+						for(PartRepository name : listRepos) {
+							index++;
+							if(name.getPartRepositoryNome().equals(nome)) ok=1;
+						}
+						
 						if(ok != 0) {
-							//Deleta no registry
+							//Deleta no registry e na lista de repos.
 							registry.unbind(nome);
-							System.out.println("Servidor-Repositório "+valor_repos+" desligado.");
+							listRepos.remove(listRepos.get(index-1));
+							System.out.println("Repositório "+nome+" desligado.");
 						} else System.out.println("Ação inválida: Nome de Servidor incorreto!");					
 					} else System.out.println("Não foram encontrados Repositórios ativos.");
 					break;
 				//-------------------------------------------------
+				case "reload":
+					if(listRepos.size() != 0) {
+						System.out.println("Repositórios disponíveis:");
+						for (PartRepository name : listRepos) System.out.println(" - "+name.getPartRepositoryNome());
+
+						System.out.print("Diga o nome do repositório desejado: ");
+						nome = entrada.nextLine();
+						
+						ok = 0;
+						PartRepository index;
+						for(PartRepository name : listRepos) {
+							if(name.getPartRepositoryNome().equals(nome)) {
+								index = name.getClass();
+								ok=1;
+							}
+						}
+						
+						if(ok != 0) {
+							partRepos = new PartRepositoryImpl(nome);
+							//Criamos o stub do objeto que sera registrado
+							stub = (PartRepository)UnicastRemoteObject.exportObject(partRepos, 0);
+							//Re-registra (rebinds) o stub no registry
+							registry.rebind(nome, stub);
+							listRepos.set(index, stub);
+							System.out.println("Repositório "+ nome +" reiniciado.");
+						} else System.out.println("Ação inválida: Nome de Repositório incorreto!");
+					} else System.out.println("Não foram encontrados Repositórios ativos.");
+					break;	
+				//-------------------------------------------------
 				case "quit":
-					System.out.print("Deseja realmente terminar sua sessão? Seus dados serão perdidos e seus repositórios apagados! (s/n)");
+					System.out.println("Seus dados serão perdidos e seus repositórios apagados e deslistados do Registry!"); 
+					System.out.print("Deseja realmente terminar sua sessão?(s/n)");
 					text = entrada.nextLine();
 					if(text.equals("s")){
-						for (String name : listRepos){
+						for (PartRepository name : listRepos){
 							//Deleta no registry
-							registry.unbind(name);
-							System.out.println("Servidor-Repositório "+valor_repos+" desligado.");
+							registry.unbind(name.getPartRepositoryNome());
+							System.out.println("Repositório "+name.getPartRepositoryNome()+" desligado.");							
 						}
+						registry = null;
+						listRepos.clear();
+						partRepos = null;
+						stub = null;
 						throw new QuitException();
 					}
 					else if(text.equals("n")) System.out.println("Operação cancelada!");
@@ -156,6 +194,8 @@ public class ServerPartRepository {
 			System.err.println("Já está rodando uma instância do servidor.");
 		} catch (QuitException e) {
 			System.out.println("Encerrada sua sessão com sucesso!");
+		} catch (ConnectException e) {
+			System.err.println("Problemas com o Registry: " + e.toString());
 		} catch (Exception e) {
 			System.err.println("Ocorreu um erro no servidor: " + e.toString());
 		}
