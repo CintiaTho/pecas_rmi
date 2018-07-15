@@ -198,7 +198,7 @@ public class ClientPartRepository {
 								System.out.println("   - nome: " + part.getPartNome());
 								System.out.println("   - quant:" + quant);
 								System.out.println("   - descrição: " + part.getPartDescricao());
-								System.out.println("   - repositório: " + part.getPartRepository());
+								System.out.println("   - repositório: " + part.getPartRepository().getPartRepositoryNome());
 								System.out.println();
 							}
 						}
@@ -274,6 +274,7 @@ public class ClientPartRepository {
 									}
 									else if(text.equals("prim")){
 										peca = new PartImpl(nome, descr, null);
+										peca.setPartRepository(partRepos);
 										partRepos.registraPart(peca);
 										System.out.println("A peça foi inserida com sucesso!");
 									}
