@@ -80,7 +80,6 @@ public class ClientPartRepository {
 							System.out.println("addlsp: adicionar à lista de subpeças atual n unidades da peça atual;");
 							
 							System.out.println("addp: adicionar uma peça ao repositório atual (primária ou utilizando a sua lista de subpeças atual);");
-							System.out.println("addsubp: adicionar à peça atual as subpeças de sua lista de subpeças atual;");
 							System.out.println("quit: encerra sua sessão;");
 						}
 						break;
@@ -147,7 +146,7 @@ public class ClientPartRepository {
 
 								if(text.equals("s")) {
 									System.out.print("Diga o código da peça que quer buscar: ");
-									//!!!Procurar em todos os repositorios, devolver a peça e seu repos., mantendo o bind original;!!!!
+									//Procura apenas no atual repositorio (bind)
 									text = entrada.nextLine();
 									try{
 										peca = partRepos.getPartPorUID(text);
@@ -264,7 +263,7 @@ public class ClientPartRepository {
 								else{
 									System.out.println("Você tem peças na sua Lista de Subpeças, deseja: ");
 									System.out.println("- prim: Criar a peça como Primária - isto manterá sua lista intacta;");
-									System.out.println("- comSub: Criar a peça com subpeças (da sua Lista de Subpeças atual) - *isto apagará sua lista;");
+									System.out.println("- comsub: Criar a peça com subpeças (da sua Lista de Subpeças atual) - *isto apagará sua lista;");
 									System.out.println("- cancel: cancelar a ação;");
 									text = entrada.nextLine();
 									if(text.equals("comSub")){

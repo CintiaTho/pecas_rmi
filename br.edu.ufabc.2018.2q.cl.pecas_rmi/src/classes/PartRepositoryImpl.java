@@ -35,7 +35,7 @@ public class PartRepositoryImpl implements PartRepository {
 	public Part getPartPorUID(String text) {
 		for (Entry<UID, Part> it : uid_part.entrySet()){
 			UID id = it.getKey();
-			if(id.toString().equals(text)) return it.getValue();
+			if(id.toString().equalsIgnoreCase(text)) return it.getValue();
 		}
 		return null;
 	}

@@ -27,32 +27,35 @@ public class PartImpl implements Part {
 		this.uid = new UID();
 		this.nome = nome;
 		this.descricao = descricao;
-		this.subPartQuant = new HashMap<Part, Integer>();
+		this.subPartQuant = null;
 		// Inicialmente cria a peca sem atrelar a um repositorio
 		this.repositorio = null;
 
 		// Efetua triagem dos subcomponentes
 		HashMap<Part, Integer> subcomponentes = new HashMap<Part, Integer>();
 		// Popula subPartQuant validando as entradas do parametro
-		for (HashMap.Entry<Part, Integer> entrada : subPartQuant.entrySet()) {
-			Part part = entrada.getKey();
-			if (part == null) {
-				throw new NullPointerException();
+		if(subPartQuant == null) this.subPartQuant = new HashMap<Part, Integer>();
+		else {	
+			for (HashMap.Entry<Part, Integer> entrada : subPartQuant.entrySet()) {
+				Part part = entrada.getKey();
+				if (part == null) {
+					throw new NullPointerException();
+				}
+				Integer quant = entrada.getValue();
+				if (quant == null) {
+					throw new NullPointerException();
+				}
+				if (quant <= 0) {
+					throw new QuantidadeInvalidaException();
+				}
+				// Part de subcomponente ja precisa estar registrado em repositorio
+				if (!part.isRegistrado()) {
+					throw new PartNaoRegistradaException();
+				}
+				subcomponentes.put(part, quant);
 			}
-			Integer quant = entrada.getValue();
-			if (quant == null) {
-				throw new NullPointerException();
-			}
-			if (quant <= 0) {
-				throw new QuantidadeInvalidaException();
-			}
-			// Part de subcomponente ja precisa estar registrado em repositorio
-			if (!part.isRegistrado()) {
-				throw new PartNaoRegistradaException();
-			}
-			subcomponentes.put(part, quant);
+			this.subPartQuant = subcomponentes;
 		}
-		this.subPartQuant = subcomponentes;
 	}
 
 	// Descricao da peca
