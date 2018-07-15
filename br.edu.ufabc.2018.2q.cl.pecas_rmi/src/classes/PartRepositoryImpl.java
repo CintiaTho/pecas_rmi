@@ -33,9 +33,9 @@ public class PartRepositoryImpl implements PartRepository {
 	// Busca Part por UID
 	@Override
 	public Part getPartPorUID(String text) {
-		for (Entry<UID, Part> it : uid_part.entrySet()){  
+		for (Entry<UID, Part> it : uid_part.entrySet()){
 			UID id = it.getKey();
-			if(id.equals(text)) return it.getValue();
+			if(id.toString().equals(text)) return it.getValue();
 		}
 		return null;
 	}

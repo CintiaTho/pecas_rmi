@@ -11,7 +11,6 @@ package rmi;
 import java.rmi.ConnectException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.rmi.server.UID;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Scanner;
@@ -124,11 +123,11 @@ public class ClientPartRepository {
 							else {
 								for (iterator = partRepos.getPartRepositoryParts().iterator(); iterator.hasNext();) {
 									Part part = iterator.next();
-									System.out.println("  ID:" + part.getPartUID());
-									System.out.println("    - nome:" + part.getPartNome());
-									System.out.println("    - desc:" + part.getPartDescricao());
-									if(part.isPrimitiva()) System.out.println("    - Primária - não possui subpeças;");
-									else System.out.println("    - Possui "+ part.getSubcomponentes().size() +" subpeças.");
+									System.out.println("  ID: " + part.getPartUID());
+									System.out.println("  - nome: " + part.getPartNome());
+									System.out.println("  - desc: " + part.getPartDescricao());
+									if(part.isPrimitiva()) System.out.println("  - primária: 0 subpeças;");
+									else System.out.println("    - possui: "+ part.getSubcomponentes().size() +" subpeças.");
 									System.out.println("");
 								}
 							}
@@ -140,21 +139,26 @@ public class ClientPartRepository {
 							if(partRepos.getPartRepositoryParts().isEmpty()) System.out.println("Não há peças neste repositório.");
 							else{
 								if(peca != null) System.out.println("Você possui uma peça selecionada para ser a atual.");
-								else{
-									System.out.println("Você não possui uma peça selecionada para ser a atual.");
-									System.out.println("Deseja continuar o processo? Isto tornará a peça inserida em sua atual (s/n)");
+								else System.out.println("Você não possui uma peça selecionada para ser a atual.");
+								
+								System.out.println("Isto tornará a peça inserida em sua atual.");
+								System.out.print("Deseja continuar o processo? (s/n) ");
+								text = entrada.nextLine();
+
+								if(text.equals("s")) {
+									System.out.print("Diga o código da peça que quer buscar: ");
+									//!!!Procurar em todos os repositorios, devolver a peça e seu repos., mantendo o bind original;!!!!
 									text = entrada.nextLine();
-									
-									if(text.equals("s")) {
-										System.out.print("Diga o código da peça que quer buscar: ");
-										//!!!Procurar em todos os repositorios, devolver a peça e seu repos., mantendo o bind original;!!!!
-										text = entrada.next();					
+									try{
 										peca = partRepos.getPartPorUID(text);
 										System.out.print("Peça: "+peca.getPartNome()+" é a sua atual!");
+									}catch(NullPointerException e) {
+										System.err.println("Código da peça inserido está errado ou não exite: " + e.toString());
 									}
-									else if(text.equals("n")) System.out.println("Operação cancelada!");
-									else System.out.println("Comando inválido, operação cancelada!");
 								}
+								else if(text.equals("n")) System.out.println("Operação cancelada!");
+								else System.out.println("Comando inválido, operação cancelada!");
+
 							}
 						} else System.out.println("Ação inválida: Não está conectado à um repositório.");
 						break;
@@ -167,7 +171,7 @@ public class ClientPartRepository {
 							System.out.println(" - Descrição: " + peca.getPartDescricao());
 							System.out.println(" - Repositório: " + peca.getPartRepository());
 	
-							if(peca.isPrimitiva()) System.out.println("Peça Primária - não possui subpeças.");
+							if(peca.isPrimitiva()) System.out.println(" - Primária - não possui subpeças.");
 							else {
 								System.out.println(" - Lista de subpeças:");
 								HashMap<Part, Integer> sub = peca.getSubcomponentes();
@@ -191,11 +195,11 @@ public class ClientPartRepository {
 							for (HashMap.Entry<Part, Integer> it : list_subpecas.entrySet()){  
 								Part part = it.getKey();
 								Integer quant = it.getValue();
-								System.out.println("id: " + part.getPartUID());
-								System.out.println(" - nome: " + part.getPartNome());
-								System.out.println(" - quant:" + quant);
-								System.out.println(" - descrição: " + part.getPartDescricao());
-								System.out.println(" - repositório: " + part.getPartRepository());
+								System.out.println(" - id: " + part.getPartUID());
+								System.out.println("   - nome: " + part.getPartNome());
+								System.out.println("   - quant:" + quant);
+								System.out.println("   - descrição: " + part.getPartDescricao());
+								System.out.println("   - repositório: " + part.getPartRepository());
 								System.out.println();
 							}
 						}
@@ -204,7 +208,7 @@ public class ClientPartRepository {
 					case "clearlsp":
 						if(list_subpecas.isEmpty()) System.out.println("A sua lista já está vazia.");
 						else {
-							System.out.print("Quer realmente realizar esta ação? (s/n)");
+							System.out.print("Quer realmente realizar esta ação? (s/n) ");
 							text = entrada.nextLine();
 							if(text.equals("s")){
 								list_subpecas.clear();
@@ -218,8 +222,8 @@ public class ClientPartRepository {
 					case "addlsp":
 						if(peca != null) {
 							System.out.println("Quantas unidades de "+ peca.getPartNome() + " quer adicionar na lista de subpeças atual?");
-							System.out.println("*Se quiser cancelar a operação digite qualquer letra....");
-							num = entrada.nextInt();
+							System.out.print("*Se quiser cancelar a operação digite qualquer letra: ");
+							num = Integer.parseInt(entrada.nextLine());
 							if(num > 0) {
 								list_subpecas.put(peca, num);
 								System.out.println("Adição à lista de subpeças efetuada.");
@@ -233,58 +237,61 @@ public class ClientPartRepository {
 						//permitir inserir list_subpecas em uma peca ja existente 
 						if(partRepos != null) {
 							if(peca != null) System.out.println("Você possui uma peça selecionada para ser a atual.");
-							else{
-								System.out.println("Você não possui uma peça selecionada para ser a atual.");
-								System.out.println("Deseja continuar o processo? Isto tornará a peça inserida em sua atual (s/n)");
-								text = entrada.nextLine();
-								
-								if(text.equals("s")) {
-									System.out.print("Qual o Nome da peça a ser inserida no Repositório Atual" + partRepos.getPartRepositoryNome() + "?");
-									String nome = entrada.nextLine();
-									System.out.print("Qual a Dercrição da peça?");
-									String descr = entrada.nextLine();
-	
-									if(list_subpecas.isEmpty()) {
-										System.out.print("Você não tem peças na sua Lista de Subpeças, deseja continuar o processo e criar uma peça primária? (s/n)");
-										text = entrada.nextLine();
-										if(text.equals("s")){
-											peca = new PartImpl(nome, descr, list_subpecas);
-											partRepos.registraPart(peca);
-											System.out.println("A peça foi inserida com sucesso!");
-										}
-										else if(text.equals("n")) System.out.println("Operação cancelada!");
-										else System.out.println("Comando inválido, operação cancelada!");
+							else System.out.println("Você não possui uma peça selecionada para ser a atual.");
+							
+							System.out.println("Isto tornará a peça inserida em sua atual.");
+							System.out.print("Deseja continuar o processo? (s/n) ");
+							text = entrada.nextLine();
+
+							if(text.equals("s")) {
+								System.out.print("Qual o Nome da peça a ser inserida em " + partRepos.getPartRepositoryNome() + "? ");
+								String nome = entrada.nextLine();
+								System.out.print("Qual a Dercrição da peça? ");
+								String descr = entrada.nextLine();
+
+								if(list_subpecas.isEmpty()) {
+									System.out.println("Você não tem peças na sua Lista de Subpeças");
+									System.out.print("Deseja continuar o processo e criar uma peça primária? (s/n) ");
+									text = entrada.nextLine();
+									if(text.equals("s")){
+										peca = new PartImpl(nome, descr, list_subpecas);
+										partRepos.registraPart(peca);
+										System.out.println("A peça foi inserida com sucesso!");
 									}
-									else{
-										System.out.print("Você tem peças na sua Lista de Subpeças, deseja: ");
-										System.out.print("- prim: Criar a peça como Primária - isto manterá sua lista intacta;");
-										System.out.print("- comSub: Criar a peça com subpeças (da sua Lista de Subpeças atual) - *isto apagará sua lista;");
-										System.out.print("- cancel: cancelar a ação;");
-										text = entrada.nextLine();
-										if(text.equals("comSub")){
-											peca = new PartImpl(nome, descr, list_subpecas);
-											partRepos.registraPart(peca);
-											System.out.println("A peça foi inserida com sucesso!");
-											list_subpecas.clear();
-											System.out.println("A lista foi limpa com sucesso!");
-										}
-										else if(text.equals("prim")){
-											peca = new PartImpl(nome, descr, null);
-											partRepos.registraPart(peca);
-											System.out.println("A peça foi inserida com sucesso!");
-										}
-										else if(text.equals("cancel")) System.out.println("Operação cancelada!");
-										else System.out.println("Comando inválido, operação cancelada!");
+									else if(text.equals("n")) System.out.println("Operação cancelada!");
+									else System.out.println("Comando inválido, operação cancelada!");
+								}
+								else{
+									System.out.println("Você tem peças na sua Lista de Subpeças, deseja: ");
+									System.out.println("- prim: Criar a peça como Primária - isto manterá sua lista intacta;");
+									System.out.println("- comSub: Criar a peça com subpeças (da sua Lista de Subpeças atual) - *isto apagará sua lista;");
+									System.out.println("- cancel: cancelar a ação;");
+									text = entrada.nextLine();
+									if(text.equals("comSub")){
+										peca = new PartImpl(nome, descr, list_subpecas);
+										partRepos.registraPart(peca);
+										System.out.println("A peça foi inserida com sucesso!");
+										list_subpecas.clear();
+										System.out.println("A lista foi limpa com sucesso!");
 									}
-								} 
-								else if(text.equals("n")) System.out.println("Operação cancelada!");
-								else System.out.println("Comando inválido, operação cancelada!");
-							}
+									else if(text.equals("prim")){
+										peca = new PartImpl(nome, descr, null);
+										partRepos.registraPart(peca);
+										System.out.println("A peça foi inserida com sucesso!");
+									}
+									else if(text.equals("cancel")) System.out.println("Operação cancelada!");
+									else System.out.println("Comando inválido, operação cancelada!");
+								}
+							} 
+							else if(text.equals("n")) System.out.println("Operação cancelada!");
+							else System.out.println("Comando inválido, operação cancelada!");
+
 						} else System.out.println("Ação inválida: Não está conectado à um repositório.");
 						break;
 					//-------------------------------------------------
 					case "quit":
-						System.out.print("Deseja realmente terminar sua sessão? Seus dados poderão ser perdidos! (s/n)");
+						System.out.print("Deseja realmente terminar sua sessão?");
+						System.out.print("Seus dados poderão ser perdidos! (s/n) ");
 						text = entrada.nextLine();
 						if(text.equals("s")){
 							throw new QuitException();

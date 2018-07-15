@@ -84,7 +84,7 @@ public class ServerPartRepository {
 					break;
 				//-------------------------------------------------
 				case "create":
-					System.out.print("Quer realmente realizar esta ação? (s/n)");
+					System.out.print("Quer realmente realizar esta ação? (s/n) ");
 					text = entrada.nextLine();
 					if(text.equals("s")){
 						if(listRepos.size() == 0) {
@@ -170,7 +170,7 @@ public class ServerPartRepository {
 				//-------------------------------------------------
 				case "quit":
 					System.out.println("Seus dados serão perdidos e seus repositórios apagados e deslistados do Registry!"); 
-					System.out.print("Deseja realmente terminar sua sessão?(s/n)");
+					System.out.print("Deseja realmente terminar sua sessão?(s/n) ");
 					text = entrada.nextLine();
 					if(text.equals("s")){
 						for (PartRepository name : listRepos){
