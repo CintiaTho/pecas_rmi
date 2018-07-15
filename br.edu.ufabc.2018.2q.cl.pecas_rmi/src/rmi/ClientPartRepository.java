@@ -99,6 +99,7 @@ public class ClientPartRepository {
 								text = entrada.nextLine();
 								if(text.equals(partRepos.getPartRepositoryNome())) System.out.println("Você já está conectado a este repositório.");
 								else {
+									ok=0;
 									for (String name : boundNames) if(name.equals(text)) ok=1;
 									if(ok != 0) {
 										partRepos = (PartRepository) registry.lookup(text);
@@ -106,6 +107,7 @@ public class ClientPartRepository {
 									} else System.out.println("Ação inválida: Nome de Servidor incorreto!");
 								}
 							} catch (NullPointerException e) {
+								ok=0;
 								for (String name : boundNames) if(name.equals(text)) ok=1;
 								if(ok != 0) {
 									partRepos = (PartRepository) registry.lookup(text);
@@ -167,8 +169,8 @@ public class ClientPartRepository {
 							System.out.println("Sua peça atual:");
 							System.out.println("ID: " + peca.getPartUID());
 							System.out.println(" - Nome: " + peca.getPartNome());
-							System.out.println(" - Descrição: " + peca.getPartDescricao());
-							System.out.println(" - Repositório: " + peca.getPartRepository());
+							System.out.println(" - Descr: " + peca.getPartDescricao());
+							System.out.println(" - Repos: " + peca.getPartRepository().getPartRepositoryNome());
 	
 							if(peca.isPrimitiva()) System.out.println(" - Primária - não possui subpeças.");
 							else {
@@ -177,9 +179,11 @@ public class ClientPartRepository {
 								for (HashMap.Entry<Part, Integer> it : sub.entrySet()){  
 									Part part = it.getKey();
 									//Integer quant = it.getValue(); 
-									System.out.println("   - id:" + part.getPartUID());
-									System.out.println("   - nome:" + part.getPartNome());
-									System.out.println("   - quant:" + it.getValue());
+									System.out.println("   - id: " + part.getPartUID());
+									System.out.println("   - nome: " + part.getPartNome());
+									System.out.println("   - quant: " + it.getValue());
+									System.out.println("   - descr: " + part.getPartDescricao());
+									System.out.println("   - repos: " + part.getPartRepository().getPartRepositoryNome());
 									System.out.println();
 								}
 							}
@@ -197,8 +201,8 @@ public class ClientPartRepository {
 								System.out.println(" - id: " + part.getPartUID());
 								System.out.println("   - nome: " + part.getPartNome());
 								System.out.println("   - quant:" + quant);
-								System.out.println("   - descrição: " + part.getPartDescricao());
-								System.out.println("   - repositório: " + part.getPartRepository().getPartRepositoryNome());
+								System.out.println("   - descr: " + part.getPartDescricao());
+								System.out.println("   - repos: " + part.getPartRepository().getPartRepositoryNome());
 								System.out.println();
 							}
 						}
