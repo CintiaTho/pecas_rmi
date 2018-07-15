@@ -127,11 +127,8 @@ public class ClientPartRepository {
 									System.out.println("  ID:" + part.getPartUID());
 									System.out.println("    - nome:" + part.getPartNome());
 									System.out.println("    - desc:" + part.getPartDescricao());
-									if(part.isPrimitiva()) System.out.println("    - Peça Primária - não possui subpeças;");
-									else {
-										HashMap<Part, Integer> sub = part.getSubcomponentes();
-										System.out.println("Peça possui "+ sub.size() +" subpeças.");
-									}
+									if(part.isPrimitiva()) System.out.println("    - Primária - não possui subpeças;");
+									else System.out.println("    - Possui "+ part.getSubcomponentes().size() +" subpeças.");
 									System.out.println("");
 								}
 							}
@@ -142,10 +139,22 @@ public class ClientPartRepository {
 						if(partRepos != null) {
 							if(partRepos.getPartRepositoryParts().isEmpty()) System.out.println("Não há peças neste repositório.");
 							else{
-								System.out.print("Diga o código da peça que quer buscar: ");
-								//!!!Procurar em todos os repositorios, devolver a peça e seu repos., mantendo o bind original;!!!!
-								text = entrada.next();					
-								peca = partRepos.getPartPorUID(text);
+								if(peca != null) System.out.println("Você possui uma peça selecionada para ser a atual.");
+								else{
+									System.out.println("Você não possui uma peça selecionada para ser a atual.");
+									System.out.println("Deseja continuar o processo? Isto tornará a peça inserida em sua atual (s/n)");
+									text = entrada.nextLine();
+									
+									if(text.equals("s")) {
+										System.out.print("Diga o código da peça que quer buscar: ");
+										//!!!Procurar em todos os repositorios, devolver a peça e seu repos., mantendo o bind original;!!!!
+										text = entrada.next();					
+										peca = partRepos.getPartPorUID(text);
+										System.out.print("Peça: "+peca.getPartNome()+" é a sua atual!");
+									}
+									else if(text.equals("n")) System.out.println("Operação cancelada!");
+									else System.out.println("Comando inválido, operação cancelada!");
+								}
 							}
 						} else System.out.println("Ação inválida: Não está conectado à um repositório.");
 						break;
