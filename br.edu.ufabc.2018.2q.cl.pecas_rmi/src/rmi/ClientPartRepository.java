@@ -274,7 +274,6 @@ public class ClientPartRepository {
 									}
 									else if(text.equals("prim")){
 										peca = new PartImpl(nome, descr, null);
-										peca.setPartRepository(partRepos);
 										partRepos.registraPart(peca);
 										System.out.println("A peça foi inserida com sucesso!");
 									}

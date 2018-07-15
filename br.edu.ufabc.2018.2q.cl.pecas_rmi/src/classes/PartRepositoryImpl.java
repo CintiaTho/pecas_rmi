@@ -35,7 +35,7 @@ public class PartRepositoryImpl implements PartRepository {
 	public Part getPartPorUID(String text) {
 		for (Entry<UID, Part> it : uid_part.entrySet()){
 			UID id = it.getKey();
-			if(id.toString().equalsIgnoreCase(text)) return it.getValue();
+			if(id.toString().equals(text)) return it.getValue();
 		}
 		return null;
 	}
@@ -60,7 +60,7 @@ public class PartRepositoryImpl implements PartRepository {
 
 	// Registra Part em repositorio
 	@Override
-	public void registraPart(Part part) throws RemoteException, PartRegistradaException {
+	public void registraPart(Part part) throws RemoteException{
 		if (part.isRegistrado()) {
 			throw new PartRegistradaException();
 		}
