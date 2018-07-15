@@ -171,7 +171,6 @@ public class ClientPartRepository {
 							System.out.println(" - Nome: " + peca.getPartNome());
 							System.out.println(" - Descr: " + peca.getPartDescricao());
 							System.out.println(" - Repos: " + peca.getPartRepository().getPartRepositoryNome());
-	
 							if(peca.isPrimitiva()) System.out.println(" - Primária - não possui subpeças.");
 							else {
 								System.out.println(" - Lista de subpeças:");
@@ -200,7 +199,7 @@ public class ClientPartRepository {
 								Integer quant = it.getValue();
 								System.out.println(" - id: " + part.getPartUID());
 								System.out.println("   - nome: " + part.getPartNome());
-								System.out.println("   - quant:" + quant);
+								System.out.println("   - quant: " + quant);
 								System.out.println("   - descr: " + part.getPartDescricao());
 								System.out.println("   - repos: " + part.getPartRepository().getPartRepositoryNome());
 								System.out.println();
@@ -224,14 +223,41 @@ public class ClientPartRepository {
 					//-------------------------------------------------
 					case "addlsp":
 						if(peca != null) {
-							System.out.println("Quantas unidades de "+ peca.getPartNome() + " quer adicionar na lista de subpeças atual?");
-							System.out.print("*Se quiser cancelar a operação digite qualquer letra: ");
-							num = Integer.parseInt(entrada.nextLine());
-							if(num > 0) {
-								list_subpecas.put(peca, num);
-								System.out.println("Adição à lista de subpeças efetuada.");
+							ok=0;
+							Part i = null;
+							int j = 0;
+							for (HashMap.Entry<Part, Integer> it : list_subpecas.entrySet()){  
+								Part part = it.getKey();
+								if(peca.equals(part)) {
+									i = part;
+									j = it.getValue();
+									ok = 1;
+								}
 							}
-							else System.out.println("Ação inválida/cancelada: Quantidade nula ou negativa.");
+							if(ok==0) {
+								System.out.println("Quantas unidades de "+ peca.getPartNome() + " quer adicionar na lista de subpeças atual?");
+								System.out.print("*Se quiser cancelar a operação digite qualquer letra: ");
+								num = Integer.parseInt(entrada.nextLine());
+								if(num > 0) {
+									list_subpecas.put(peca, num);
+									System.out.println("Adição à lista de subpeças efetuada.");
+								}
+								else System.out.println("Ação inválida/cancelada: Quantidade nula ou negativa.");
+							}
+							else {
+								if(i == null || j <= 0) System.out.println("Ação inválida/cancelada: Quantidade nula ou negativa.");
+								else {
+									System.out.println(peca.getPartNome() + " já possui " + j + " unidades na lista;");
+									System.out.println("Digite um número para atualizar a quantidade na lista de subpeças atual;");
+									System.out.print("*Se quiser cancelar a operação digite qualquer letra: ");
+									num = Integer.parseInt(entrada.nextLine());
+									if(num > 0) {
+										list_subpecas.replace(i, j, num);
+										System.out.println("Atualização à lista de subpeças efetuada.");
+									}
+									else System.out.println("Ação inválida/cancelada: Quantidade nula ou negativa.");
+								}
+							}
 						} else System.out.println("Ação inválida: Ainda não selecionada uma peça para ser a atual.");
 						break;
 					//-------------------------------------------------
@@ -258,6 +284,7 @@ public class ClientPartRepository {
 									if(text.equals("s")){
 										peca = new PartImpl(nome, descr, list_subpecas);
 										partRepos.registraPart(peca);
+										partRepos = (PartRepository) registry.lookup(partRepos.getPartRepositoryNome());
 										System.out.println("A peça foi inserida com sucesso!");
 									}
 									else if(text.equals("n")) System.out.println("Operação cancelada!");
@@ -272,6 +299,8 @@ public class ClientPartRepository {
 									if(text.equals("comsub")){
 										peca = new PartImpl(nome, descr, list_subpecas);
 										partRepos.registraPart(peca);
+										peca.setPartRepository(partRepos);
+										partRepos = (PartRepository) registry.lookup(partRepos.getPartRepositoryNome());
 										System.out.println("A peça foi inserida com sucesso!");
 										list_subpecas.clear();
 										System.out.println("A lista foi limpa com sucesso!");
