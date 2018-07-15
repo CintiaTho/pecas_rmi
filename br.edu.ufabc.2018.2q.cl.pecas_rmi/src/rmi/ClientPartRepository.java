@@ -284,8 +284,12 @@ public class ClientPartRepository {
 									if(text.equals("s")){
 										peca = new PartImpl(nome, descr, list_subpecas);
 										partRepos.registraPart(peca);
-										partRepos = (PartRepository) registry.lookup(partRepos.getPartRepositoryNome());
 										System.out.println("A peça foi inserida com sucesso!");
+										
+										//aqui fazemos um mini getp e bind - por causa de um bug de NullPointerException 
+										//onde o "part.getPartRepository().getPartRepositoryNome()" em showp, showlsp retorna null apos add uma peca
+										partRepos = (PartRepository) registry.lookup(partRepos.getPartRepositoryNome());
+										peca = partRepos.getPartPorUID(peca.getPartUID().toString());
 									}
 									else if(text.equals("n")) System.out.println("Operação cancelada!");
 									else System.out.println("Comando inválido, operação cancelada!");
@@ -300,15 +304,24 @@ public class ClientPartRepository {
 										peca = new PartImpl(nome, descr, list_subpecas);
 										partRepos.registraPart(peca);
 										peca.setPartRepository(partRepos);
-										partRepos = (PartRepository) registry.lookup(partRepos.getPartRepositoryNome());
 										System.out.println("A peça foi inserida com sucesso!");
 										list_subpecas.clear();
 										System.out.println("A lista foi limpa com sucesso!");
+										
+										//aqui fazemos um mini getp e bind - por causa de um bug de NullPointerException 
+										//onde o "part.getPartRepository().getPartRepositoryNome()" em showp, showlsp retorna null apos add uma peca
+										partRepos = (PartRepository) registry.lookup(partRepos.getPartRepositoryNome());
+										peca = partRepos.getPartPorUID(peca.getPartUID().toString());
 									}
 									else if(text.equals("prim")){
 										peca = new PartImpl(nome, descr, null);
 										partRepos.registraPart(peca);
 										System.out.println("A peça foi inserida com sucesso!");
+										
+										//aqui fazemos um mini getp e bind - por causa de um bug de NullPointerException 
+										//onde o "part.getPartRepository().getPartRepositoryNome()" em showp, showlsp retorna null apos add uma peca
+										partRepos = (PartRepository) registry.lookup(partRepos.getPartRepositoryNome());
+										peca = partRepos.getPartPorUID(peca.getPartUID().toString());
 									}
 									else if(text.equals("cancel")) System.out.println("Operação cancelada!");
 									else System.out.println("Comando inválido, operação cancelada!");
