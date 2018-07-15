@@ -97,16 +97,13 @@ public class PartImpl implements Part {
 	// Informa se ja esta registrado em um PartRepository
 	@Override
 	public boolean isRegistrado() {
-		return this.repositorio != null;
+		return (this.repositorio != null);
 	}
 
 	// Registra um PartRepository se nao estiver registrado
 	@Override
-	public void setPartRepository(PartRepository partRepository) throws PartRegistradaException {
-		if (this.isRegistrado()) {
-			throw new PartRegistradaException();
-		}
-		this.repositorio = partRepository;
+	public void setPartRepository(PartRepository partRepository){
+		if(!this.isRegistrado()) this.repositorio = partRepository;
 	}
 
 }

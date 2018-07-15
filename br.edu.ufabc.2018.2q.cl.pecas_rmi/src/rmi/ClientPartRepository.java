@@ -232,8 +232,7 @@ public class ClientPartRepository {
 						break;
 					//-------------------------------------------------
 					case "addp":
-						//Adicionar uma nova atraves da insercao de dados pelo usuario e/ou
-						//permitir inserir list_subpecas em uma peca ja existente 
+						//Adicionar uma nova atraves da insercao de dados pelo usuario
 						if(partRepos != null) {
 							if(peca != null) System.out.println("Você possui uma peça selecionada para ser a atual.");
 							else System.out.println("Você não possui uma peça selecionada para ser a atual.");
@@ -266,7 +265,7 @@ public class ClientPartRepository {
 									System.out.println("- comsub: Criar a peça com subpeças (da sua Lista de Subpeças atual) - *isto apagará sua lista;");
 									System.out.println("- cancel: cancelar a ação;");
 									text = entrada.nextLine();
-									if(text.equals("comSub")){
+									if(text.equals("comsub")){
 										peca = new PartImpl(nome, descr, list_subpecas);
 										partRepos.registraPart(peca);
 										System.out.println("A peça foi inserida com sucesso!");
